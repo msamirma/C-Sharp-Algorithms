@@ -2,41 +2,41 @@
 {    
     public static class StringExtensions
     {
-        public static bool Has(this string source, string pattern)
+        public static bool Has(this string source, string substring)
         {
-            if (string.IsNullOrEmpty(pattern) || string.IsNullOrEmpty(source))
+            if (string.IsNullOrEmpty(substring) || string.IsNullOrEmpty(source))
             {
                 return false;
             }
 
-            if (pattern.Length > source.Length)
+            if (substring.Length > source.Length)
             {
                 return false;
             }
 
             for (var i = 0; i < source.Length; i++)
             {
-                if (i + pattern.Length > source.Length)
+                if (i + substring.Length > source.Length)
                 {
                     return false;
                 }
 
-                if (source[i] == pattern[0])
+                if (source[i] == substring[0])
                 {
-                    if (pattern.Length == 1)
+                    if (substring.Length == 1)
                     {
                         return true;
                     }
 
                     var isSubString = true;
-                    for (var j = 1; j < pattern.Length; j++)
+                    for (var j = 1; j < substring.Length; j++)
                     {
                         if (!isSubString)
                         {
                             break;
                         }
 
-                        isSubString = source[i + j] == pattern[j];
+                        isSubString = source[i + j] == substring[j];
                     }
 
                     if (isSubString)
@@ -45,8 +45,7 @@
                     }
                 }
             }
-
             return false;  
-        }    
+        }        
     }  
 }

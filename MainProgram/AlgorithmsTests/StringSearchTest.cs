@@ -3,16 +3,16 @@
     using System;
     using System.Diagnostics;
 
-    using NUnit.Framework;
     using Algorithms.Strings;
+
+    using NUnit.Framework;
 
     [TestFixture]
     public class StringSearchTest
     {
         [TestFixtureSetUp]
         public void Init()
-        {
-            
+        {            
         }
 
         [Test]
