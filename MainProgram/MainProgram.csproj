@@ -95,6 +95,7 @@
     <Compile Include="DataStructuresTests\Graphs_DirectedWeightedSparseGraphTest.cs" />
     <Compile Include="DataStructuresTests\HashTableSeparateChainingTest.cs" />
     <Compile Include="DataStructuresTests\SkipListTest.cs" />
+    <Compile Include="DataStructuresTests\SortedListTests.cs" />
     <Compile Include="DataStructuresTests\TrieMapTest.cs" />
     <Compile Include="DataStructuresTests\TrieTest.cs" />
     <Compile Include="Program.cs" />
