@@ -283,7 +283,7 @@
 
     #region Not Yet Implemented (Pre & Post Order Traversal)
 
-    internal class PreOrderNodeFinder<T> : INodeFinder<T>
+    internal class InOrderNodeFinder<T> : INodeFinder<T>
         where T : IComparable<T>
     {
         public SortedListNode<T> FindNode(SortedListNode<T> head, T data, ref int level)
