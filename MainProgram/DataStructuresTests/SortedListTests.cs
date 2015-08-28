@@ -10,6 +10,8 @@ namespace C_Sharp_Algorithms.DataStructuresTests
 {
     using DataStructures.Lists;
 
+    using NUnit.Framework.Constraints;
+
     [TestFixture]
     public class SortedListTests
     {
@@ -20,16 +22,16 @@ namespace C_Sharp_Algorithms.DataStructuresTests
 
         [Test]
         public void TestAdd()
-        {
-            var list = new SortedList<int> { 5, 10, 1, 1 };
+        {            
+            var list = new SortedList<int>();
+            list.Add(1);
+            list.Add(3);
+            list.Add(5);
+            list.Add(4);
+            list.Add(8);                      
 
-            foreach (var item in list)
-            {
-                Console.WriteLine(item);
-            }
-
-            Assert.AreEqual("1,1,5,10", string.Join(",",list));
-            Assert.AreEqual(4, list.Count);
+            Assert.AreEqual("1,3,4,5,8", string.Join(",", list));
+            Assert.AreEqual(5, list.Count);
         }
     }
 }

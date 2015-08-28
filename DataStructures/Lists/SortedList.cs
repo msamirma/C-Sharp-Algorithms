@@ -3,10 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    
-    // todo:
-    // rotate head to balance tree
-
+        
     internal interface INodeFinder<T>
     where T : IComparable<T>
     {
@@ -24,12 +21,14 @@
     public class SortedList<T> : IEnumerable<T>
         where T : IComparable<T>
     {
+        private readonly object locker = new object();
+
         private SortedListNode<T> head;
 
         private int count;
 
         private int level;
-
+        
         public int Count
         {
             get
@@ -52,18 +51,79 @@
 
         public void Add(T data)
         {
-            if (this.head == null)
+            lock (this.locker)
             {
-                this.head = new SortedListNode<T>(data);
-            }
-            else
-            {                
-                this.InternalAdd(data);
-            }
+                if (this.head == null)
+                {
+                    this.head = new SortedListNode<T>(data);
+                    this.count++;
+                }
+                else
+                {
+                    this.InternalAdd(data);
+                    this.count++;   
 
-            this.count++;
+                    if (this.count == 2)
+                    {                        
+                        var temp = this.head.RightNode;
+                        temp.ParentNode = null;
+                        temp.LeftNode = this.head;
+                        this.head.ParentNode = temp;
+                        this.head.RightNode = null;
+                        this.head = temp;
+                    }
+                    
+                    if (this.count > 2)
+                    {                                                                      
+                        var comparison = this.head.Data.CompareTo(data);
+                        if (comparison > 0)
+                        {
+                            if (this.head.HasLeftNode)
+                            {                                                               
+                                var temp = this.head.LeftNode;
+                                this.head.ParentNode = temp;
+                                temp.ParentNode = null;
+
+                                var tempPointer = temp;
+                                while (tempPointer.HasRightNode)
+                                {
+                                    tempPointer = tempPointer.RightNode;
+                                }
+
+                                this.head.LeftNode = null;
+                                tempPointer.RightNode = this.head;
+                                this.head = temp;
+                            }                                                           
+                        }
+                        else if (comparison < 0)
+                        {
+                            if (this.head.HasRightNode)
+                            {                                
+                                var temp = this.head.RightNode;
+                                this.head.ParentNode = temp;
+                                temp.ParentNode = null;
+
+                                var tempPointer = temp;
+                                while (tempPointer.HasLeftNode)
+                                {
+                                    tempPointer = tempPointer.LeftNode;
+                                }
+
+                                this.head.RightNode = null;
+                                tempPointer.LeftNode = this.head;
+                                this.head = temp;                                
+                            }                                                       
+                        }
+                    }
+                }                
+            }            
         }
-                
+
+        public void AddRange(T[] items)
+        {
+            // todo impl this
+        }
+        
         public T Get(T data)
         {
             return default(T);
@@ -77,10 +137,8 @@
         
         private void InternalAdd(T data)
         {
-            new InorderNodeFinder<T>().AddNode(this.head, data, ref this.level);
-
-            // todo: rotate head to keep tree in balance
-        }        
+            new InorderNodeFinder<T>().AddNode(this.head, data, ref this.level);            
+        }    
     }
 
     public class SortedListNode<T> : IComparable<T>
@@ -90,8 +148,10 @@
 
         private SortedListNode<T> leftNode;
 
-        private SortedListNode<T> rightNode;        
-        
+        private SortedListNode<T> rightNode;
+
+        public SortedListNode<T> ParentNode;        
+
         public SortedListNode(T data)
         {
             this.internalData.Add(data);            
@@ -179,7 +239,9 @@
         where T : IComparable<T>
     {
         public SortedListNode<T> FindNode(SortedListNode<T> head, T data, ref int level)
-        {          
+        {        
+            // todo: use itiration vs recursion
+
             if (head == null)
             {
                 level++;
@@ -211,6 +273,7 @@
 
         public void AddNode(SortedListNode<T> parent, T data, ref int level)
         {
+            // todo: rename local head var
             var head = this.FindNode(parent, data, ref level);
             var comparison = head.Data.CompareTo(data);
             var newNode = new SortedListNode<T>(data);
@@ -218,10 +281,12 @@
             if (comparison > 0)
             {                
                 head.LeftNode = newNode;
+                newNode.ParentNode = head;
             }
             else if (comparison < 0)
             {
                 head.RightNode = newNode;
+                newNode.ParentNode = head;
             }
             else
             {
